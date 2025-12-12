@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSphere - Login & Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <video class="bg-video2" autoplay muted loop playsinline preload="auto">
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logoas.png" width="60" onclick="window.location.href='index.html'"></img>
+                <a href="index.html">AudioSphere</a>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html" class="cta-button">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="login-page">
+
+        <div class="form-container">
+            <div class="form-toggle">
+                <button id="show-signin" class="active">Sign In</button>
+                <button id="show-signup">Sign Up</button>
+            </div>
+
+            <!-- Sign In -->
+            <form id="signin-form" class="auth-form active">
+            <h2>Sign In to AudioSphere</h2>
+            <p class="form-note">Enter your credentials to access your dashboard.</p>
+
+            <div class="input-group">
+                <label for="signin-email">Email or Username</label>
+                <input type="text" id="signin-email" name="email" required>
+            </div>
+
+            <div class="input-group password-group">
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" name="password" required>
+                <span class="toggle-password" data-target="signin-password">Show</span>
+            </div>
+
+            <button type="submit" class="cta-button large primary-color">
+                Sign In
+            </button>
+
+            <p class="alt-option">
+                <a href="#">Forgot Password?</a>
+            </p>
+            <p class="alt-option">
+                Don't have an account? <a href="#" id="switch-to-signup">Sign Up</a>
+            </p>
+
+            <p id="signin-message" style="margin-top: 10px; color: #ff6b6b; display: none;"></p>
+            </form>
+
+            <!-- Sign Up -->
+            <form id="signup-form" class="auth-form">
+            <h2>Create Your AudioSphere Account</h2>
+            <p class="form-note">Join the community and start mastering your sound.</p>
+
+            <div class="input-group">
+                <label for="signup-username">Username</label>
+                <input type="text" id="signup-username" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="signup-email">Email Address</label>
+                <input type="email" id="signup-email" name="email" required>
+            </div>
+
+            <div class="input-group password-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" name="password" required minlength="6">
+                <span class="toggle-password" data-target="signup-password">Show</span>
+            </div>
+
+            <div class="input-group password-group">
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" name="confirm-password" required>
+                <span class="toggle-password" data-target="signup-confirm-password">Show</span>
+            </div>
+
+            <button type="submit" class="cta-button large primary-color">Sign Up</button>
+
+            <p class="alt-option">
+                Already have an account? <a href="#" id="switch-to-signin">Sign In</a>
+            </p>
+
+            <p id="signup-message" style="margin-top: 10px; color: #ff6b6b; display: none;"></p>
+        </form>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 AudioSphere. Built for the Audio Engineering Community.</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://xsopvuvqjdgyrwtybkon.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzb3B2dXZxamRneXJ3dHlia29uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NDEwMTksImV4cCI6MjA4MTAxNzAxOX0.QM5JrqUwmcRr5S-4NGLk6RfC6wQXr4INiFDtGCeVFzU'; 
+
+        // Initializing Supabase 
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const showSigninBtn = document.getElementById('show-signin');
+        const showSignupBtn = document.getElementById('show-signup');
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const switchToSignup = document.getElementById('switch-to-signup');
+        const switchToSignin = document.getElementById('switch-to-signin');
+
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.textContent = 'Hide';
+                } else {
+                    input.type = 'password';
+                    this.textContent = 'Show';
+                }
+            });
+        });
+
+
+        function showSignIn() {
+            signinForm.classList.add('active');
+            signupForm.classList.remove('active');
+            showSigninBtn.classList.add('active');
+            showSignupBtn.classList.remove('active');
+            clearMessages();
+        }
+
+        function showSignUp() {
+            signupForm.classList.add('active');
+            signinForm.classList.remove('active');
+            showSignupBtn.classList.add('active');
+            showSigninBtn.classList.remove('active');
+            clearMessages();
+        }
+
+        showSigninBtn.addEventListener('click', showSignIn);
+        showSignupBtn.addEventListener('click', showSignUp);
+        switchToSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSignUp();
+        });
+        switchToSignin.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSignIn();
+        });
+
+        function clearMessages() {
+            document.getElementById('signin-message').style.display = 'none';
+            document.getElementById('signup-message').style.display = 'none';
+        }
+
+        function showMessage(elementId, message, isError = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.color = isError ? '#ff6b6b' : '#4CAF50';
+            element.style.display = 'block';
+        }
+
+        function setButtonLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.dataset.originalText = button.textContent;
+                button.textContent = 'Loading...';
+            } else {
+                button.disabled = false;
+                button.textContent = button.dataset.originalText || button.textContent;
+            }
+        }
+
+        function setUserSession(userData) {
+            sessionStorage.setItem('audioSphereUser', JSON.stringify({
+                id: userData.id,
+                email: userData.email,
+                username: userData.username,
+                loginTime: new Date().toISOString()
+            }));
+        }
+
+        function getUserSession() {
+            const session = sessionStorage.getItem('audioSphereUser');
+            return session ? JSON.parse(session) : null;
+        }
+
+        function clearUserSession() {
+            sessionStorage.removeItem('audioSphereUser');
+        }
+
+        function hashPassword(password) {
+            // Using SHA-256 for password hashing (later making decryptor idk)
+            return CryptoJS.SHA256(password).toString();
+        }
+
+        signinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const emailOrUsername = document.getElementById('signin-email').value.trim();
+            const password = document.getElementById('signin-password').value;
+            const submitBtn = signinForm.querySelector('button[type="submit"]');
+            
+            clearMessages();
+            setButtonLoading(submitBtn, true);
+
+            try {
+                const hashedPassword = hashPassword(password);
+                
+                // Check if input is email or username
+                const isEmail = emailOrUsername.includes('@');
+                
+                let query = supabase
+                    .from('Accounts')
+                    .select('*')
+                    .eq('password', hashedPassword);
+                
+                if (isEmail) {
+                    query = query.eq('email', emailOrUsername);
+                } else {
+                    query = query.eq('username', emailOrUsername);
+                }
+                
+                const { data, error } = await query.single();
+
+                if (error || !data) {
+                    throw new Error('Invalid email/username or password');
+                }
+
+                // Success! Store session and redirect
+                setUserSession(data);
+                showMessage('signin-message', 'Login successful! Redirecting...', false);
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Sign in error:', error);
+                showMessage('signin-message', error.message || 'Invalid email/username or password');
+                setButtonLoading(submitBtn, false);
+            }
+        });
+
+        // ==========================================
+        // SIGN UP FUNCTIONALITY
+        // ==========================================
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+            
+            clearMessages();
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showMessage('signup-message', 'Passwords do not match!');
+                return;
+            }
+
+            // Validate password length
+            if (password.length < 6) {
+                showMessage('signup-message', 'Password must be at least 6 characters long');
+                return;
+            }
+
+            setButtonLoading(submitBtn, true);
+
+            try {
+                const { data: existingEmail } = await supabase
+                    .from('Accounts')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+
+                if (existingEmail) {
+                    throw new Error('Email already registered');
+                }
+
+                const { data: existingUsername } = await supabase
+                    .from('Accounts')
+                    .select('username')
+                    .eq('username', username)
+                    .single();
+
+                if (existingUsername) {
+                    throw new Error('Username already taken');
+                }
+
+                // Hash the password
+                const hashedPassword = hashPassword(password);
+
+                // Insert new account
+                const { data: newAccount, error } = await supabase
+                    .from('Accounts')
+                    .insert([
+                        {
+                            email: email,
+                            username: username,
+                            password: hashedPassword
+                        }
+                    ])
+                    .select()
+                    .single();
+
+                if (error) {
+                    throw error;
+                }
+
+                // Success message
+                showMessage('signup-message', 
+                    'Account created successfully! You can now sign in.', 
+                    false
+                );
+                
+                // Clear form and switch to sign in after 2 seconds
+                signupForm.reset();
+                setButtonLoading(submitBtn, false);
+                
+                setTimeout(() => {
+                    showSignIn();
+                    document.getElementById('signin-email').value = email;
+                }, 2000);
+
+            } catch (error) {
+                console.error('Sign up error:', error);
+                showMessage('signup-message', error.message || 'Failed to create account');
+                setButtonLoading(submitBtn, false);
+            }
+        });
+
+        function checkUser() {
+            const session = getUserSession();
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        checkUser();
+    </script>
+</body>
+</html>

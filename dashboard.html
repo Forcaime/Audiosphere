@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSphere - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 40px auto;
+            text-align: left;
+        }
+        .dashboard-card {
+            background-color: var(--background-light); /* Dark section background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* subtle default shadow */
+            border-left: 5px solid var(--primary-color); /* gold accent */
+            transition: transform 0.6s ease, box-shadow 0.4s ease; /* smooth upscale & shadow */
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px) scale(1.03); /* gentle lift + upscale */
+            box-shadow: 0 12px 25px rgba(255, 204, 102, 0.5), /* shimmer gold glow */
+            0 8px 16px rgba(0, 0, 0, 0.5); /* retain depth shadow */
+        }
+
+        .dashboard-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .dashboard-card a {
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+        .welcome-banner {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        .welcome-banner h2 {
+            color: var(--text-light);
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logoas.png" width="60" onclick="window.location.href='dashboard.html'"></img>
+                <a href="dashboard.html">AudioSphere</a>
+            </div>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="practice.html">Practice</a></li>
+                <li><a href="hub.html">Hub</a></li>
+                <li><a href="#" id="logout-btn" class="cta-button">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section-padded" style="min-height: 80vh; text-align: center;">
+            <div class="welcome-banner">
+                <h2 id="welcome-message">Welcome Back, User!</h2>
+                <p style="color: #FFFFFF">Your hub for audio engineering practice, community, and knowledge.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Practice Module</h3>
+                    <p>Hone your skills with interactive mixing and EQ exercises. Your next challenge awaits!</p>
+                    <a href="practice.html">Start Practicing &rarr;</a>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Community Wall</h3>
+                    <p>See the latest posts, tips, and audio snippets from the AudioSphere community.</p>
+                    <a href="hub.html">View Feed &rarr;</a>
+                </div>
+            
+                <div class="dashboard-card">
+                    <h3>My Schedule</h3>
+                    <p>Check your upcoming events, workshops, and deadlines. Never miss a beat.</p>
+                    <a href="scheduling.html">View Calendar &rarr;</a>
+                </div>
+                <div class="dashboard-card">
+                    <h3>My Profile</h3>
+                    <p>Update your bio, avatar, and view your progress and achievements.</p>
+                    <a href="#">View Profile &rarr;</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AudioSphere. Built for the Audio Engineering Community.</p>
+    </footer>
+
+    <script>
+        
+        function getUserSession() {
+            const session = sessionStorage.getItem('audioSphereUser');
+            return session ? JSON.parse(session) : null;
+        }
+
+        function clearUserSession() {
+            sessionStorage.removeItem('audioSphereUser');
+        }
+
+        function checkAuthentication() {
+            const user = getUserSession();
+            
+            if (!user) {
+                // No user session found, redirect to login
+                alert('Please log in to access the dashboard');
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            return user;
+        }
+
+        function displayUserInfo() {
+            const user = checkAuthentication();
+            
+            if (user) {
+                // Display username in welcome message
+                const welcomeMessage = document.getElementById('welcome-message');
+                welcomeMessage.textContent = `Welcome Back, ${user.username}!`;
+                
+                // You can also display other user info if needed
+                console.log('Logged in user:', user);
+                console.log('User ID:', user.id);
+                console.log('Email:', user.email);
+                console.log('Username:', user.username);
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (confirm('Are you sure you want to logout?')) {
+                clearUserSession();
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Run on page load
+        displayUserInfo();
+    </script>
+</body>
+</html>

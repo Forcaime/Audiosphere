@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSphere - AudioHub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logoas.png" width="60" onclick="window.location.href='index.html'"></img>
+                <a href="index.html">AudioSphere</a>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html" class="cta-button">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+
+    <video class="bg-video" autoplay muted loop playsinline preload="auto">
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-content">
+        <h1 class="title-hover">Audio. Amplified.</h1>
+        <p class="hero-content2">Crafting sound that speaks.</p>
+        <a href="login.html" class="cta-button large hero-content3">Start Your Journey</a>
+    </div>
+    
+</section>
+
+        <section id="about" class="section-padded">
+            <h2>What is AudioSphere?</h2>
+            <div class="two-column-layout">
+                <p>AudioSphere is more than a platform; it is a sanctuary for sound. A place where the craft of audio engineering is both celebrated and honed. Here, tools meet hands, knowledge meets curiosity, and connections weave into a tapestry of growth. Whether you are a student or a seasoned professional, AudioSphere guides your journey, shaping skill into artistry.</p>
+                <p>We nurture learning through hands-on tools that invite exploration, forge connections through vibrant channels and conversation, and cultivate wisdom through shared stories and rich libraries. Designed to expand, AudioSphere grows from an intimate circle into a boundless network of sound designers and producers, where creativity resonates across every corner of the globe.</p>
+            </div>
+        </section>
+
+        <section class="section-alt">
+            <h2>Who is it for?</h2>
+            <div class="card-container">
+                <div class="card">
+                    <h3>Students</h3>
+                    <p>Get hands-on practice with mixing and EQ tools, build your portfolio, and connect with mentors.</p>
+                </div>
+                <div class="card">
+                    <h3>Audio Engineers</h3>
+                    <p>Share advanced techniques, review gear, and find collaboration opportunities on the job board.</p>
+                </div>
+                <div class="card">
+                    <h3>Hobbyists & Enthusiasts</h3>
+                    <p>Learn the basics, troubleshoot your home studio, and join discussions on your favorite topics.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section-padded">
+            <h2>Key Features Overview</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>Practice Page</h3>
+                    <p>Interactive modules for mixing, EQ training, and basic maintenance tutorials.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Community Wall</h3>
+                    <p>Share experiences, tips, photos, or audio snippets with the community.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Sharing and Mixing</h3>
+                    <p>Share your projects and collaborate with others in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="join" class="cta-section">
+            <h2>Ready to Elevate Your Audio Career?</h2>
+            <p>Join the AudioSphere community today and start mastering your craft.</p>
+            <a href="login.html" class="cta-button large">Step In</a>
+            <p class="small-text">Note: This is a static placeholder. The full application with login and database features is coming soon!</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AudioSphere. Built for the Audio Engineering Community.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const title = document.querySelector('.title-hover');
+    
+    if (!title) return;
+
+    title.addEventListener('mousemove', (e) => {
+        const rect = title.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * 10; // max 10deg
+        const rotateY = ((x - centerX) / centerX) * 10;
+
+        title.style.transform = `rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        title.style.textShadow = `${rotateY}px ${rotateX}px 20px rgba(212, 175, 55, 1)`;
+    });
+
+    title.addEventListener('mouseleave', () => {
+        title.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+        title.style.textShadow = '0 0 10px rgba(212, 175, 55, 1)';
+    });
+});
+</script>
+
+
+</body>
+</html>
